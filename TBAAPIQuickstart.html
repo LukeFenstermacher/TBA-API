@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<title>TBA API Quickstart</title>
+		
+		<link rel="icon" type="image/png" href="Banner.png">
+
+	</head>
+	
+	<body>
+	
+		<p>Event Key:</p>
+		
+		<input name="key" id="eventKey" placeholder="EX. 2020caln" value="2020caln">
+		
+		<button onclick="loadTeams()">Load Teams</button>
+		
+		<!-- This div holds all the teams that are "printed" to the web page -->
+		
+		<div id="container"></div>
+	
+	</body>
+
+	<script>
+	
+		/* Sends a request to TBA API and receives a response with the requested information */
+	
+		function loadTeams () {
+		
+			var secret = "EysiBhoO1QUTebn3AVWXkXIcMaQSmkm5F02nQxiyerKrwiveKbYap0cTQdIqB9qp";//"Input_your_secret_here_0123456789";
+		
+			var xmlhttp = new XMLHttpRequest();
+			
+			var eventKey = document.getElementById("eventKey").value;
+			
+			// Modifying the url changes where information is requested from, changing what information is requested
+			// More about this is found at https://www.thebluealliance.com/apidocs/v3
+			
+			var url = "https://www.thebluealliance.com/api/v3/event/" + eventKey + "/teams";
+			
+			xmlhttp.open("GET", url, true);
+
+			xmlhttp.setRequestHeader("X-TBA-Auth-Key", secret);
+				
+			xmlhttp.onreadystatechange = function() {
+			
+				if (this.readyState == 4 && this.status == 200) {
+				
+					// The url responds with the requested information in JSON format
+					
+					var response = this.responseText;
+					
+					var separated = separateJSON(response);
+					
+					writeTeams(separated);
+					
+				}
+				
+			};
+			
+			xmlhttp.send();
+		
+		}
+					
+		/* Separate the JSON response into a two dimensional array */
+		
+		function separateJSON (response) {
+		
+			// Separates the JSON response into an array 
+			
+			var teams = JSON.parse(response);
+		
+			var returnTeams = new Array(teams.length);
+			 			
+			for (var team = 0; team < teams.length; team++) {
+			
+				var info = new Array(3);
+				
+				// Access the information of each individual team
+				
+				info[0] = teams[team].key;
+				info[1] = teams[team].team_number;
+				info[2] = teams[team].nickname;
+			
+				returnTeams[team] = info;
+			
+			}
+			
+			return returnTeams;
+			
+		}
+					
+		/* "Print" the information of each team on the web page */
+		
+		function writeTeams (teams) {
+		
+			var container = document.getElementById("container");
+			
+			container.innerHTML = "";
+		
+			for (var team = 0; team < teams.length; team++) {
+			
+				var currentTeam = document.createElement("h3");
+				currentTeam.innerHTML = teams[team][1] + " - " + teams[team][2];
+				
+				container.appendChild(currentTeam);
+				
+			}
+		
+		}
+	
+	</script>
+
+</html>
