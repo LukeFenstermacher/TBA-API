@@ -30,9 +30,15 @@
 	
 		function loadTeams () {
 		
-			var secret = "EysiBhoO1QUTebn3AVWXkXIcMaQSmkm5F02nQxiyerKrwiveKbYap0cTQdIqB9qp";//"Input_your_secret_here_0123456789";
+			// REPLACE Input_your_key_here_0123456789 WITH YOUR KEY
+		
+			var key = "Input_your_key_here_0123456789";
+			
+			// The request
 		
 			var xmlhttp = new XMLHttpRequest();
+			
+			// Get the text inside the input box
 			
 			var eventKey = document.getElementById("eventKey").value;
 			
@@ -42,8 +48,12 @@
 			var url = "https://www.thebluealliance.com/api/v3/event/" + eventKey + "/teams";
 			
 			xmlhttp.open("GET", url, true);
+			
+			// Give the site we're requesting from the key
 
-			xmlhttp.setRequestHeader("X-TBA-Auth-Key", secret);
+			xmlhttp.setRequestHeader("X-TBA-Auth-Key", key);
+			
+			// When we get a response from the site
 				
 			xmlhttp.onreadystatechange = function() {
 			
@@ -53,7 +63,11 @@
 					
 					var response = this.responseText;
 					
+					// Separate the response in the function below
+					
 					var separated = separateJSON(response);
+					
+					// "Print" the teams in the function two below
 					
 					writeTeams(separated);
 					
@@ -61,33 +75,43 @@
 				
 			};
 			
+			// Send request
+			
 			xmlhttp.send();
 		
 		}
 					
-		/* Separate the JSON response into a two dimensional array */
+		/* Separate the JSON response into a two dimensional array (arrays inside of an array) */
 		
 		function separateJSON (response) {
 		
 			// Separates the JSON response into an array 
 			
 			var teams = JSON.parse(response);
+			
+			// The larger array to store teams' info
 		
 			var returnTeams = new Array(teams.length);
 			 			
 			for (var team = 0; team < teams.length; team++) {
 			
+				// New array to hold the current team's info
+			
 				var info = new Array(3);
 				
-				// Access the information of each individual team
+				// Access the information of the current team
 				
 				info[0] = teams[team].key;
 				info[1] = teams[team].team_number;
 				info[2] = teams[team].nickname;
+				
+				// Put this info in the larger array
 			
 				returnTeams[team] = info;
 			
 			}
+			
+			// Give the larger array back to where it was asked for in loadTeams ()
 			
 			return returnTeams;
 			
@@ -97,14 +121,24 @@
 		
 		function writeTeams (teams) {
 		
+			// The place where the output teams will be stored
+		
 			var container = document.getElementById("container");
 			
+			// Get rid of everything inside the container 
+			
 			container.innerHTML = "";
+			
+			// For each team inside the larger array
 		
 			for (var team = 0; team < teams.length; team++) {
 			
+				// Create text with the format "TEAM # - Team Name"
+			
 				var currentTeam = document.createElement("h3");
 				currentTeam.innerHTML = teams[team][1] + " - " + teams[team][2];
+				
+				// Add the text to the container
 				
 				container.appendChild(currentTeam);
 				
